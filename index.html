@@ -3,9 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta http-equiv="refresh" content="0; url=app.html">
 <title>Palavras da Gabriela</title>
-<script>location.replace('app.html'+location.search+location.hash)</script>
+<script>
+localStorage.setItem('gabriela_supabase_config_v1', JSON.stringify({
+  url: 'https://zzlipojiqcjwlogklzhx.supabase.co',
+  key: 'sb_publishable_JEAhAnyOB5MsNvPRWt8q6g_R8ZELPE5'
+}));
+location.replace('app.html'+location.search+location.hash);
+</script>
 </head>
 <body><p>Abrindo o aplicativo... <a href="app.html">Entrar</a></p></body>
 </html>

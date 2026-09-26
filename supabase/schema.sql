@@ -30,9 +30,18 @@ alter table public.words enable row level security;
 alter table public.attempts enable row level security;
 alter table public.app_settings enable row level security;
 
-create policy "words own rows" on public.words for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
-create policy "attempts own rows" on public.attempts for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
-create policy "settings own row" on public.app_settings for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+drop policy if exists "words own rows" on public.words;
+drop policy if exists "attempts own rows" on public.attempts;
+drop policy if exists "settings own row" on public.app_settings;
+
+create policy "words own rows" on public.words for all to authenticated using (auth.uid() = user_id) with check (auth.uid() = user_id);
+create policy "attempts own rows" on public.attempts for all to authenticated using (auth.uid() = user_id) with check (auth.uid() = user_id);
+create policy "settings own row" on public.app_settings for all to authenticated using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
+grant select, insert, update, delete on public.words to authenticated;
+grant select, insert, update, delete on public.attempts to authenticated;
+grant select, insert, update, delete on public.app_settings to authenticated;
+grant usage, select on all sequences in schema public to authenticated;
 
 create index if not exists attempts_user_created_idx on public.attempts(user_id, created_at);
 create index if not exists attempts_user_word_idx on public.attempts(user_id, word);

@@ -82,7 +82,7 @@ create or replace function public.join_family(p_code text)
 returns uuid
 language plpgsql
 security definer
-set search_path = public
+set search_path = public, extensions
 as $$
 declare
   v_family uuid;

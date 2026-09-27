@@ -1,22 +1,6 @@
-const FAMILY_ACCESS_KEY='gabriela_family_access_v1';
-let familyId=null;
+const FAMILY_ID='91cb1562-7220-4bd9-8faa-8eb3886086bb';
+let familyId=FAMILY_ID;
 
-function getStoredFamilyCode(){
-  try{return localStorage.getItem(FAMILY_ACCESS_KEY)||''}catch{return''}
-}
-function captureFamilyCode(){
-  try{
-    const source=(window.parent&&window.parent!==window)?window.parent.location.hash:location.hash;
-    const m=source.match(/(?:^#|[&#])access=([^&]+)/);
-    if(m&&m[1]){
-      const code=decodeURIComponent(m[1]);
-      localStorage.setItem(FAMILY_ACCESS_KEY,code);
-      try{if(window.parent&&window.parent!==window)window.parent.history.replaceState(null,'',window.parent.location.pathname+window.parent.location.search)}catch{}
-      return code;
-    }
-  }catch{}
-  return getStoredFamilyCode();
-}
 function hideOldLoginUi(){
   try{
     const card=document.querySelector('.cloudCard');
@@ -24,63 +8,19 @@ function hideOldLoginUi(){
     card.querySelectorAll('.row').forEach(x=>x.classList.add('hidden'));
     ['sbSave','sbLogin','sbSignup','sbLogout'].forEach(id=>document.getElementById(id)?.classList.add('hidden'));
     const p=card.querySelector('p.muted');
-    if(p)p.textContent='A nuvem é conectada automaticamente. Não é necessário informar e mail ou senha.';
+    if(p)p.textContent='A nuvem conecta automaticamente ao abrir o aplicativo. Não é necessário informar e mail ou senha.';
     const note=card.querySelector('.note');
-    if(note)note.textContent='O aparelho recebe uma sessão anônima do Supabase. O histórico é compartilhado entre os aparelhos autorizados pelo link privado da família.';
+    if(note)note.textContent='A identificação técnica é criada automaticamente pelo Supabase e fica invisível para quem usa o aplicativo.';
   }catch{}
-}
-async function familyMembership(){
-  const {data,error}=await sb.from('family_members').select('family_id').eq('user_id',sbUser.id).limit(1).maybeSingle();
-  if(error)throw error;
-  return data?.family_id||null;
-}
-async function ensureAnonymousFamily(){
-  if(!sb)return false;
-  try{
-    let {data:{session},error}=await sb.auth.getSession();
-    if(error)throw error;
-    if(!session){
-      const res=await sb.auth.signInAnonymously();
-      if(res.error)throw res.error;
-      session=res.data.session;
-    }
-    sbUser=session?.user||null;
-    if(!sbUser)throw new Error('Não foi possível criar a sessão anônima.');
-    familyId=await familyMembership();
-    if(!familyId){
-      const code=captureFamilyCode();
-      if(!code){
-        cloudMsg.textContent='Este aparelho ainda não recebeu o link privado da família.';
-        renderCloudState();
-        return false;
-      }
-      const {data,error:joinError}=await sb.rpc('join_family',{p_code:code});
-      if(joinError)throw joinError;
-      familyId=data;
-    }
-    renderCloudState();
-    await syncCloud(true);
-    return true;
-  }catch(e){
-    familyId=null;
-    cloudMsg.textContent='Não foi possível conectar à nuvem. '+(e.message||'');
-    renderCloudState();
-    return false;
-  }
 }
 
 renderCloudState=function(){
   hideOldLoginUi();
-  if(familyId){
+  if(sbUser&&familyId){
     cloudBadge.textContent='Nuvem conectada';
     cloudBadge.className='cloudBadge online';
     syncState.textContent='conectada';
     sbSync.classList.remove('hidden');
-  }else if(sbUser){
-    cloudBadge.textContent='Nuvem aguardando autorização';
-    cloudBadge.className='cloudBadge offline';
-    syncState.textContent='aguardando link privado';
-    sbSync.classList.add('hidden');
   }else{
     cloudBadge.textContent='Conectando à nuvem';
     cloudBadge.className='cloudBadge offline';
@@ -146,8 +86,7 @@ syncCloud=async function(showMessage=true){
   }finally{syncBusy=false}
 };
 
-(async()=>{
-  hideOldLoginUi();
+async function connectAutomatically(){
   const cfg=cloudConfig();
   if(!cfg.url||!cfg.key||!window.supabase){
     cloudMsg.textContent='Configuração da nuvem indisponível.';
@@ -156,8 +95,23 @@ syncCloud=async function(showMessage=true){
   }
   try{
     if(!sb)sb=window.supabase.createClient(cfg.url,cfg.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});
-    await ensureAnonymousFamily();
+    let {data:{session},error}=await sb.auth.getSession();
+    if(error)throw error;
+    if(!session){
+      const res=await sb.auth.signInAnonymously();
+      if(res.error)throw res.error;
+      session=res.data.session;
+    }
+    sbUser=session?.user||null;
+    if(!sbUser)throw new Error('Não foi possível iniciar a conexão automática.');
+    renderCloudState();
+    await syncCloud(true);
   }catch(e){
-    cloudMsg.textContent='Falha ao iniciar a nuvem. '+(e.message||'');
+    sbUser=null;
+    cloudMsg.textContent='Não foi possível conectar à nuvem. '+(e.message||'');
+    renderCloudState();
   }
-})();
+}
+
+hideOldLoginUi();
+connectAutomatically();

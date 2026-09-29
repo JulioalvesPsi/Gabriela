@@ -14,7 +14,7 @@
     <div class="cat">😺</div>
     <div>
       <h1>Palavras da Gabriela</h1>
-      <div class="muted">Leitura sem cronômetro visível, com histórico local e sincronização opcional na nuvem.</div>
+      <div class="muted">Prática de leitura com seleção adaptativa de palavras.</div>
       <div id="cloudBadge" class="cloudBadge offline">Somente neste aparelho</div>
     </div>
   </div>
@@ -32,7 +32,7 @@
         <div class="stat"><b id="pTotal">0</b><span>palavras</span></div>
         <div class="stat"><b id="pBank">0</b><span>banco adaptativo</span></div>
       </div>
-      <p class="muted">Uma palavra por vez. O tempo de resposta é medido silenciosamente e serve apenas para estimar esforço de leitura.</p>
+      <p class="muted">Uma palavra por vez. Leia com calma e marque como foi.</p>
       <label>Quantidade da sessão</label>
       <input id="size" type="number" min="1" max="50" value="10">
       <button class="btn primary" id="startBtn">Começar</button>
@@ -53,20 +53,22 @@
       <div class="party">😸🎉</div>
       <h2 class="center">Parabéns!</h2>
       <p id="doneTxt" class="center"></p>
-      <div class="stats">
+      <div class="done-actions">
+        <button class="btn primary" id="again">Nova sessão</button>
+      </div>
+      <div class="stats done-stats">
         <div class="stat"><b id="doneOk">0</b><span>lidas</span></div>
         <div class="stat"><b id="doneNo">0</b><span>não lidas</span></div>
-        <div class="stat"><b id="doneAvg">0 s</b><span>tempo médio</span></div>
+        <div class="stat hidden"><b id="doneAvg">0 s</b><span>tempo médio</span></div>
         <div class="stat"><b id="donePct">0%</b><span>progresso</span></div>
       </div>
-      <button class="btn primary" id="again">Nova sessão</button>
     </div>
   </section>
 
   <section id="adult" class="view hidden">
-    <div class="card cloudCard">
+    <div class="card cloudCard hidden">
       <div class="topline"><h2>Nuvem</h2><span id="syncState" class="pill">não configurada</span></div>
-      <p class="muted">Use sua conta Supabase para manter palavras, tentativas, tempos e configurações iguais em qualquer aparelho.</p>
+      <p class="muted">Sincronização automática.</p>
       <div class="row">
         <div>
           <label>URL do projeto Supabase</label>
@@ -95,7 +97,7 @@
         <button class="btn secondary hidden" id="sbLogout">Sair da nuvem</button>
       </div>
       <div id="cloudMsg" class="muted small"></div>
-      <p class="note small">A senha não é gravada pelo aplicativo. Depois do primeiro login, o Supabase mantém a sessão no aparelho. O app continua registrando localmente quando estiver sem internet e tenta sincronizar depois.</p>
+      <p class="note small">Sincronização automática.</p>
     </div>
 
     <div class="card">
@@ -167,14 +169,14 @@
       <button class="btn secondary" id="stopV">Encerrar</button>
     </div>
 
-    <div class="card">
+    <div class="card hidden" aria-hidden="true">
       <h2>Backup local</h2>
       <div class="row">
         <button class="btn secondary" id="exportBtn">Exportar backup</button>
         <button class="btn secondary" id="importBtn">Restaurar backup</button>
       </div>
       <input class="hidden" id="file" type="file" accept="application/json">
-      <p class="muted small">Mesmo usando a nuvem, o backup manual continua disponível.</p>
+      <p class="muted small">Backup técnico oculto da interface.</p>
     </div>
   </section>
 </div>

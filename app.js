@@ -36,7 +36,14 @@ function labelOf(k){return patternDefs.find(p=>p.key===k)?.label||k}
 function fresh(){return{words:starter.map(w=>({w,history:[],source:'manual'})),settings:{caseMode:'lower',adaptive:true}}}
 function normalize(raw){let base=raw&&Array.isArray(raw.words)?raw:fresh();base.words=(base.words||[]).map(x=>({w:String(x.w||x.word||'').trim().toLowerCase(),history:(x.history||[]).map(h=>({eventId:h.eventId||uid(),date:h.date||new Date().toISOString(),result:(h.result==='solo'||h.result==='ajuda'||h.result==='lido')?'lido':'nao',who:h.who||'gabriela',durationMs:Number(h.durationMs)||Number(h.latencyMs)||null,synced:!!h.synced})),source:x.source||'manual'})).filter(x=>x.w);base.settings=base.settings||{};base.settings.caseMode=base.settings.caseMode==='upper'?'upper':'lower';base.settings.adaptive=base.settings.adaptive!==false;return base}
 function load(){for(const key of [K,'gabriela_leitura_github_v2','gabriela_leitura_github_v1','gabriela_github_v1','gabriela_leitura_v3','gabriela_leitura_v2','gabriela_leitura_v1']){try{let x=localStorage.getItem(key);if(x)return normalize(JSON.parse(x))}catch(e){}}return fresh()}
-let db=load(),bank=[],queue=[],i=0,ok=0,no=0,score=0,shownAt=0,hintTimer=null,sessionTimes=[],vq=[],vi=0,vShownAt=0,vHintTimer=null,sort={col:'difficulty',dir:'desc'};
+const HISTORY_RESET_KEY='gabriela_history_reset_20260929';
+let db=load();
+if(localStorage.getItem(HISTORY_RESET_KEY)!=='1'){
+  db.words.forEach(w=>w.history=[]);
+  localStorage.setItem(K,JSON.stringify(db));
+  localStorage.setItem(HISTORY_RESET_KEY,'1');
+}
+let bank=[],queue=[],i=0,ok=0,no=0,score=0,shownAt=0,hintTimer=null,sessionTimes=[],vq=[],vi=0,vShownAt=0,vHintTimer=null,sort={col:'difficulty',dir:'desc'};
 let sb=null,sbUser=null,syncBusy=false;
 function persist(){localStorage.setItem(K,JSON.stringify(db))}
 function save(){persist();render();if(sbUser)syncCloud(false)}

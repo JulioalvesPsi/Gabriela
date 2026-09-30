@@ -2,6 +2,26 @@ const K='gabriela_leitura_github_v3';
 const CLOUD_K='gabriela_supabase_config_v1';
 const BANK_K='gabriela_banco_2000_v1';
 const BANK_SOURCE='https://raw.githubusercontent.com/fserb/pt-br/master/icf';
+const REWARD_PHOTOS=Array.from({length:10},(_,i)=>`assets/recompensas/foto_${String(i+1).padStart(2,'0')}.jpg`);
+let lastRewardPhoto=-1;
+function showRewardPhoto(){
+  const box=document.querySelector('.celebox');
+  if(!box)return;
+  const old=box.querySelector('.bigcat');
+  if(old)old.style.display='none';
+  let img=document.getElementById('celePhoto');
+  if(!img){
+    img=document.createElement('img');
+    img.id='celePhoto';
+    img.alt='Foto de comemoração';
+    img.style.cssText='display:block;width:auto;max-width:100%;height:auto;max-height:300px;object-fit:contain;border-radius:20px;margin:0 auto 14px';
+    box.insertBefore(img,box.firstChild);
+  }
+  let n=Math.floor(Math.random()*REWARD_PHOTOS.length);
+  if(REWARD_PHOTOS.length>1&&n===lastRewardPhoto)n=(n+1)%REWARD_PHOTOS.length;
+  lastRewardPhoto=n;
+  img.src=REWARD_PHOTOS[n];
+}
 const starter=['pato','gato','bola','mesa','sol','mar','flor','papel','festa','porta','carta','vento','campo','filme','prato','preto','primo','fruta','bruxa','braço','bloco','planta','trigo','grito','cravo','claro','chuva','chave','ninho','banho','palha','folha','carro','terra','queijo','guerra','quadro','grande','branco','triste','estrela','presente','problema','criança'];
 const blocked=new Set(('merda porra puta sexo sexual foder caralho assassino assassinato homicídio suicídio droga drogas arma armas sangue matar matou morte morto morta mortos matando mataram violência ataque bomba explosão tiro atirou atirar inferno idiota idiotas imbecil babaca vadia maldito maldita nudez álcool cerveja vinho presidente governo política policial polícia prisão tribunal cadáver câncer').split(' '));
 const patternDefs=[
@@ -48,7 +68,7 @@ function renderPatterns(){let ps=patternStats().slice(0,6);patterns.innerHTML=''
 function renderTable(){let rows=[...db.words],d=sort.dir==='asc'?1:-1;rows.sort((a,b)=>{let A,B;if(sort.col==='word')return a.w.localeCompare(b.w,'pt-BR')*d;if(sort.col==='hits'){A=hits(a);B=hits(b)}else if(sort.col==='misses'){A=misses(a);B=misses(b)}else if(sort.col==='time'){A=avgTime(a);B=avgTime(b)}else if(sort.col==='difficulty'){A=difficulty(a);B=difficulty(b)}else{A=last(a)||'';B=last(b)||''}return A<B?-d:A>B?d:a.w.localeCompare(b.w,'pt-BR')});tbody.innerHTML='';rows.forEach(w=>{let di=difficulty(w),tg=patternsOf(w.w).map(k=>`<span class="tag">${labelOf(k)}</span>`).join('');let tr=document.createElement('tr');tr.innerHTML=`<td style="text-transform:var(--wordcase)"><b>${w.w}</b>${w.source==='bank'?'<div class="small muted">banco adaptativo</div>':''}</td><td class="ok">${hits(w)}</td><td class="no">${misses(w)}</td><td>${avgTime(w)?avgTime(w).toFixed(1)+' s':'—'}</td><td><span class="difficulty ${di>=60?'dHigh':di>=35?'dMid':'dLow'}">${di}</span></td><td>${tg||'<span class="muted small">simples</span>'}</td><td>${fmt(last(w))}</td>`;tbody.appendChild(tr)})}
 function scheduleHint(el,which){clearTimeout(which==='main'?hintTimer:vHintTimer);let id=setTimeout(()=>{el.textContent='Tudo bem se estiver difícil. Pode marcar “Não li”.'},12000);if(which==='main')hintTimer=id;else vHintTimer=id}
 function show(){clearTimeout(hintTimer);hint.textContent='';if(i>=queue.length)return finish();word.textContent=queue[i].w;count.textContent=`${i+1} de ${queue.length}`;scoreTop.textContent='Pontuação: '+score;bar.style.width=(i/queue.length*100)+'%';shownAt=performance.now();scheduleHint(hint,'main')}
-function finish(){clearTimeout(hintTimer);play.classList.add('hidden');done.classList.remove('hidden');let p=progress(),avg=sessionTimes.length?sessionTimes.reduce((s,x)=>s+x,0)/sessionTimes.length:0;doneTxt.textContent=`Pontuação da sessão: ${score}`;doneOk.textContent=ok;doneNo.textContent=no;doneAvg.textContent=avg.toFixed(1)+' s';donePct.textContent=p.pct+'%';celeTxt.textContent=`Você leu ${ok} de ${queue.length} palavra(s).`;celeScore.textContent='Pontuação: '+score;cele.classList.remove('hidden')}
+function finish(){clearTimeout(hintTimer);play.classList.add('hidden');done.classList.remove('hidden');let p=progress(),avg=sessionTimes.length?sessionTimes.reduce((s,x)=>s+x,0)/sessionTimes.length:0;doneTxt.textContent=`Pontuação da sessão: ${score}`;doneOk.textContent=ok;doneNo.textContent=no;doneAvg.textContent=avg.toFixed(1)+' s';donePct.textContent=p.pct+'%';celeTxt.textContent=`Você leu ${ok} de ${queue.length} palavra(s).`;celeScore.textContent='Pontuação: '+score;showRewardPhoto();cele.classList.remove('hidden')}
 function addAttempt(wordObj,who,result,duration){wordObj.history.push({eventId:uid(),date:new Date().toISOString(),result,who,durationMs:duration,synced:false})}
 function cloudConfig(){try{return JSON.parse(localStorage.getItem(CLOUD_K)||'{}')}catch{return{}}}
 function setCloudConfig(url,key){localStorage.setItem(CLOUD_K,JSON.stringify({url:url.trim(),key:key.trim()}))}

@@ -7,7 +7,7 @@
 <style>html,body{margin:0;width:100%;height:100%;background:#fff6ee}iframe{border:0;width:100%;height:100%;display:block}</style>
 </head>
 <body>
-<iframe id="app" src="app.html?v=26" title="Palavras da Gabriela"></iframe>
+<iframe id="app" src="app.html?v=27" title="Palavras da Gabriela"></iframe>
 <script>
 (function(){
   const m=location.hash.match(/(?:^#|[&#])access=([^&]+)/);
@@ -18,11 +18,14 @@
   const frame=document.getElementById('app');
   frame.addEventListener('load',()=>{
     try{
+      const photos=frame.contentDocument.createElement('script');
+      photos.src='extra_photos.js?v=27';
+      frame.contentDocument.body.appendChild(photos);
       const patch=frame.contentDocument.createElement('script');
-      patch.src='adaptive_patch.js?v=26';
+      patch.src='adaptive_patch.js?v=27';
       frame.contentDocument.body.appendChild(patch);
       const cloud=frame.contentDocument.createElement('script');
-      cloud.src='cloud_auto.js?v=26';
+      cloud.src='cloud_auto.js?v=27';
       frame.contentDocument.body.appendChild(cloud);
     }catch(e){console.error(e)}
   });

@@ -52,6 +52,7 @@
       <div class="practice-mascot-wrap"><img class="practice-mascot" alt="Gatinho acompanhando a leitura" src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABIMDRANCxIQDhAUExIVGywdGxgYGzYnKSAsQDlEQz85Pj1HUGZXR0thTT0+WXlaYWltcnNyRVV9hnxvhWZwcm7/2wBDARMUFBsXGzQdHTRuST5Jbm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm7/wAARCABaAFoDASIAAhEBAxEB/8QAGgABAAIDAQAAAAAAAAAAAAAAAAQFAQIDBv/EAC4QAAICAgAFAgQFBQAAAAAAAAECAAMEEQUSITFBE1EiMmFxFIGhscEWJEJT4f/EABkBAAMBAQEAAAAAAAAAAAAAAAADBAIBBf/EAB8RAAMBAQACAwEBAAAAAAAAAAABAgMRISISMUFhcf/aAAwDAQACEQMRAD8A9vERMnRERABETG+uoAZmCQBskAe5nO+9Mevnc/Ye5lPl5VmS4QnS99CLvRS+fo7PJ3/hdo6uoZGDA+QZtK7hJ5PUq8dGH8yxm5fV0xc/GuCIidMCIiAEbiF1lGKXq0G2Bs+JV/jspWHMxb7CXGVV62NZWO5HT7+JU1WKCHYeO2vMRqvP2V4/Fy/HTtVxG4fMocfXoZFey+1253ZSfl0Tr7ToxLbPkzTHet/gF6WuvfRGx+Qkjqq8dGpTPlI51ozBSSSQ3Xc70WJytpDo99royQMfVXOPPUiefxOKniPEGxqL2rvIJqUqprbX+J8g9PebjK+9RmtUX3D2/vtD/Wf3EtZR4eT6VtdrVn4l03uNy6Rw6Bl7HqJTjfyX9Ebp96bRERwgREwSB3MAMyo4ljejb66HSOfiHsfeWLZNSuFZtb8mRuLaalOYj0+bZ+pidWnDH49m1/SquU5NS1hiqO6hz5KbHNr8pU2YXFv6lC018uOlwKFeiJWOmh41qXyrzMAOhPYSwoQVLrez5icG+cG6pd6YsuFb1qhUrvTa2SPyEg43A8KjLfNxqmruYkjmPQb8geJZgqCSAAT3I8zlfkpShZ20BHvnBK7+EK2tqT8WwPdTLLB3+FTmJ67PWQajZfcLMjHsWleqg9z9SJaqwZQVOwe0XjPKbN7V4SMxESkmEjXP8ZB8STNGrVzthuZpNrwalpPyVGTbzWnZGlkjh1yZNb0uOYL1G5y4xioBW9ekYnR15mvCAlVtrFvlTZkcpzrxlj5WXUbZ2MMd1NNjBmO9HrqbYrHmLX2dBoAHoNmRMq23It9ZRsb7dukzjk3Z1aMrBVBc7Ht2/UzktPT1+jtJrPz9k3NyqKqiGb4j0AT5pXfi61ZWWl2KnYNj/wAdpEe0PbZYoG7GOvt4kgYR+V7FW3m1ynsBre9z1FnMr2PMrSm/UmvxhPSJWty2vPYH7yTwZ3fFPOd6Peee5uXYPUb108z1OB6YxE9FSq67HvuK0iZpJDM6dS2yRERABERACv41U74fNXvaHZA9pS47muwDm16g0R9J6mV2RwXHttFiM9TA70vaTbYun8pK8dlM/GiCRzt1PwiTKK0WtWsJ240qg95EycLKoYBENie6jc749/MBVZz1uAQvMNA/9iM5c17IbbVT4ZE4jw9KsUX0KUC9GQneh7zi3E+bENApABXW9/rLRcaxqLqzo86lQN+ZWJwPOB1yov15tz040Tn3/DztM2q9P0k8HxEK+taAT3G/Es6L2axQSpB31H7ThjY1yUPTYhXfYjrJeLjChOvU+8nTq31j2oieIkRERokREQAREQAREQAREQAREQAREQA//9k="></div>
       <div class="word" id="word"></div>
       <div id="hint" class="hint"></div>
+      <div style="text-align:center;margin:10px 0 16px"><button class="btn secondary" id="syllableToggle" type="button" aria-pressed="false">Separar sílabas</button></div>
       <div class="answers">
         <button class="answer good" data-result="lido"><span class="ball">✓</span>Lido</button>
         <button class="answer bad" data-result="nao"><span class="ball">✕</span>Não li</button>
@@ -124,5 +125,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="app.js?v=25"></script>
+<script src="https://cdn.jsdelivr.net/npm/hypher@0.2.5/dist/jquery.hypher.js" defer></script>
+<script src="syllables.js?v=30" defer></script>
 </body>
 </html>

@@ -1,127 +1,59 @@
 (function(){
-  "use strict";
-  const button=document.getElementById("pronunciationToggle");
-  const word=document.getElementById("word");
-  if(!button||!word)return;
-
-  // Escrita de apoio à pronúncia brasileira aproximada, não transcrição em IPA.
-  // Exceções revistas manualmente para as palavras iniciais e grafias ambíguas.
-  const exceptions={
-    "pato":"pá-tu","gato":"gá-tu","bola":"BO-la","mesa":"ME-za",
-    "sol":"sóu","mar":"mar","flor":"flor","papel":"pa-péu",
-    "festa":"FES-ta","porta":"POR-ta","carta":"cár-ta","vento":"VEN-tu",
-    "campo":"CAN-pu","filme":"FIL-mi","prato":"prá-tu","preto":"PRE-tu",
-    "primo":"prí-mu","fruta":"frú-ta","bruxa":"brú-cha","braço":"brá-su",
-    "bloco":"BLO-cu","planta":"PLAN-ta","trigo":"trí-gu","grito":"grí-tu",
-    "cravo":"crá-vu","claro":"clá-ru","chuva":"CHU-va","chave":"chá-vi",
-    "ninho":"ní-nhu","banho":"bá-nhu","palha":"pá-lha","folha":"FO-lha",
-    "carro":"CAR-ru","terra":"TER-ra","queijo":"KEI-ju","guerra":"gué-rra",
-    "quadro":"quá-dru","grande":"GRAN-di","branco":"BRAN-cu","triste":"TRIS-ti",
-    "estrela":"is-TRE-la","presente":"pre-ZEN-ti","problema":"pro-BLE-ma",
-    "criança":"cri-AN-sa","livro":"lí-vru","palavra":"pa-lá-vra",
-    "gabriela":"ga-bri-é-la","silábica":"si-lá-bi-ca","açúcar":"a-sú-car",
-    "casa":"cá-za","sapato":"sa-pá-tu","cidade":"si-dá-di",
-    "gente":"JEN-ti","noite":"NOI-ti","dia":"dí-a","tia":"tí-a",
-    "leite":"LEI-ti","amigo":"a-mí-gu","pão":"pãu","mãe":"mãi",
-    "não":"nãu","coração":"co-ra-SÃU","exame":"e-ZA-mi",
-    "xícara":"chí-ca-ra","táxi":"ták-si","texto":"TEKS-tu",
-    "máximo":"má-si-mu","próximo":"pró-si-mu","excesso":"e-SE-su",
-    "fixo":"FIK-su"
-  };
-  const vowels="aeiouáàâãéêíóôõúü";
-  const vowel=c=>vowels.includes(c||"");
-  const onset=/^(?:br|cr|dr|fr|gr|pr|tr|vr|bl|cl|fl|gl|pl|ch|lh|nh)$/;
-  const diphthongs=new Set(["ai","ei","oi","ui","au","eu","ou","iu","ão","ãe","õe","ua","ue","uo"]);
-  function groups(s){
-    const cuts=[];
-    for(let p=0;p<s.length-1;p++){
-      if(!vowel(s[p]))continue;
-      let q=p+1;
-      while(q<s.length&&!vowel(s[q]))q++;
-      if(q>=s.length)break;
-      const between=s.slice(p+1,q);
-      let cut;
-      if(!between.length){
-        const pair=s.slice(p,q+1);
-        if(diphthongs.has(pair))continue;
-        cut=q;
-      }else if(between.length===1)cut=p+1;
-      else if(between.length===2)cut=onset.test(between)?p+1:p+2;
-      else cut=onset.test(between.slice(-2))?q-2:q-1;
-      if(cut>0&&cut<s.length)cuts.push(cut);
-      p=q-1;
+"use strict";
+const manual={"água":"á-gua","pessoa":"pes-so-a","parque":"par-que","pablo":"pa-blo","prato":"pra-to","silábica":"si-lá-bi-ca","gabriela":"ga-bri-e-la","açúcar":"a-çú-car","pato":"pa-to","gato":"ga-to","bola":"bo-la","mesa":"me-sa","sol":"sol","mar":"mar","flor":"flor","papel":"pa-pel","festa":"fes-ta","porta":"por-ta","carta":"car-ta","vento":"ven-to","campo":"cam-po","filme":"fil-me","preto":"pre-to","primo":"pri-mo","fruta":"fru-ta","bruxa":"bru-xa","braço":"bra-ço","bloco":"blo-co","planta":"plan-ta","trigo":"tri-go","grito":"gri-to","cravo":"cra-vo","claro":"cla-ro","chuva":"chu-va","chave":"cha-ve","ninho":"ni-nho","banho":"ba-nho","palha":"pa-lha","folha":"fo-lha","carro":"car-ro","terra":"ter-ra","queijo":"quei-jo","guerra":"guer-ra","quadro":"qua-dro","grande":"gran-de","branco":"bran-co","triste":"tris-te","estrela":"es-tre-la","presente":"pre-sen-te","problema":"pro-ble-ma","criança":"cri-an-ça","livro":"li-vro","palavra":"pa-la-vra","casa":"ca-sa","sapato":"sa-pa-to","cidade":"ci-da-de","gente":"gen-te","noite":"noi-te","dia":"di-a","tia":"ti-a","leite":"lei-te","amigo":"a-mi-go","pão":"pão","mãe":"mãe","não":"não","coração":"co-ra-ção","exame":"e-xa-me","xícara":"xí-ca-ra","táxi":"tá-xi","texto":"tex-to","máximo":"má-xi-mo","próximo":"pró-xi-mo","excesso":"ex-ces-so","fixo":"fi-xo","história":"his-tó-ria","família":"fa-mí-lia","aquário":"a-quá-rio","saúde":"sa-ú-de","país":"pa-ís","poeta":"po-e-ta","ideia":"i-dei-a","muito":"mui-to","rua":"ru-a","quase":"qua-se","guarda":"guar-da","guitarra":"gui-tar-ra","caderno":"ca-der-no","computador":"com-pu-ta-dor","nascimento":"nas-ci-men-to","sorriso":"sor-ri-so","carinho":"ca-ri-nho","paulo":"pau-lo","pedro":"pe-dro","bruno":"bru-no","clara":"cla-ra","laura":"lau-ra","maria":"ma-ri-a","lucas":"lu-cas","gabriel":"ga-bri-el","marina":"ma-ri-na","carla":"car-la","felipe":"fe-li-pe","rafael":"ra-fa-el","bianca":"bi-an-ca","daniel":"da-ni-el","helena":"he-le-na","juliana":"ju-li-a-na","renata":"re-na-ta","camila":"ca-mi-la","marcos":"mar-cos","alice":"a-li-ce","ana":"a-na","joão":"jo-ão","davi":"da-vi","sofia":"so-fi-a","luiza":"lu-i-za","beatriz":"be-a-triz","caio":"cai-o","leo":"le-o","lara":"la-ra"};
+const vowels="aeiouáàâãéêíóôõúü";
+const diphthongs=new Set(["ai","ei","oi","ui","au","eu","ou","iu","ão","ãe","õe","ãi","õi"]);
+const validOnsets=new Set(["br","cr","dr","fr","gr","pr","tr","vr","bl","cl","fl","gl","pl","tl","ch","lh","nh","qu","gu"]);
+function separateForReading(input){
+  const s=String(input||"").normalize("NFC");
+  const lower=s.toLocaleLowerCase("pt-BR");
+  if(manual[lower]){
+    const parts=manual[lower].split("-");
+    if(parts.join("").length===s.length){
+      let pos=0;
+      return parts.map(p=>{const v=s.slice(pos,pos+p.length);pos+=p.length;return v}).join("-");
     }
-    const unique=[...new Set(cuts)].sort((a,b)=>a-b);
-    let start=0;
-    return [...unique,s.length].map(end=>{const part=s.slice(start,end);start=end;return part}).filter(Boolean);
   }
-  function respell(input){
-    let s=input.toLocaleLowerCase("pt-BR").normalize("NFC");
-    if(exceptions[s])return exceptions[s];
-    // Protege SS, Ç e C suave para não transformar esses S em Z.
-    s=s.replace(/ss/g,"§").replace(/ç/g,"§").replace(/sc(?=[eiéêí])/g,"§");
-    s=s.replace(/c(?=[eiéêí])/g,"§");
-    s=s.replace(/([aeiouáàâãéêíóôõú])s(?=[aeiouáàâãéêíóôõú])/g,"$1z");
-    s=s.replace(/§/g,"s");
-    s=s.replace(/g(?=[eiéêí])/g,"j");
-    s=s.replace(/gu(?=[eiéêí])/g,"g").replace(/qu(?=[eiéêí])/g,"k");
-    s=s.replace(/l(?!h)(?=[^aeiouáàâãéêíóôõúü]|$)/g,"u");
-    s=s.replace(/^es(?=[bcdfghjklmnpqrstvwxyz])/,"is");
-    s=s.replace(/e$/,"i").replace(/o$/,"u");
-    s=s.replace(/z$/,"s");
-    const parts=groups(s);
-    if(parts.length===0)return input;
-    const accented=/[áàâéêíóôú]/;
-    let stressed=parts.findIndex(x=>accented.test(x));
-    if(stressed<0){
-      const nasal=parts.findIndex(x=>/[ãõ]/.test(x));
-      if(nasal>=0)stressed=nasal;
-    }
-    if(stressed<0){
-      const penult=/(?:a|e|o|as|es|os|am|em|ens)$/i.test(input);
-      stressed=penult&&parts.length>1?parts.length-2:parts.length-1;
-    }
-    if(parts.length>1&&!/[áàâãéêíóôõú]/.test(parts[stressed])){
-      const chunk=parts[stressed];
-      const match=chunk.match(/[aeiou]/);
-      if(match){
-        const v=match[0];
-        if(v==="a"||v==="i"||v==="u"){
-          const marks={a:"á",i:"í",u:"ú"};
-          parts[stressed]=chunk.slice(0,match.index)+marks[v]+chunk.slice(match.index+1);
-        }else parts[stressed]=chunk.toLocaleUpperCase("pt-BR");
-      }
-    }
-    return parts.join("-");
+  if(!/^[a-záàâãéêíóôõúüç]+$/i.test(s))return s;
+  const nuclei=[];
+  for(let i=0;i<lower.length;i++){
+    const c=lower[i];
+    if(!vowels.includes(c))continue;
+    if(c==="u"&&i>0&&/[qg]/.test(lower[i-1])&&vowels.includes(lower[i+1]||""))continue;
+    const prev=nuclei[nuclei.length-1];
+    if(prev&&prev.end===i-1&&diphthongs.has(lower.slice(i-1,i+1))&&!/[áéíóú]/.test(c)){
+      prev.end=i;
+    }else nuclei.push({start:i,end:i});
   }
-  let active=false;
-  let original="";
-  function reset(){
-    active=false;
-    original=word.textContent;
-    button.textContent="Ver pronúncia";
-    button.setAttribute("aria-pressed","false");
+  if(nuclei.length<2)return s;
+  const cuts=[];
+  for(let k=0;k<nuclei.length-1;k++){
+    const prev=nuclei[k],next=nuclei[k+1];
+    const middle=lower.slice(prev.end+1,next.start);
+    let cut;
+    if(!middle.length)cut=next.start;
+    else if(middle.length===1)cut=prev.end+1;
+    else if(validOnsets.has(middle))cut=prev.end+1;
+    else if(middle.length===2)cut=prev.end+2;
+    else if(validOnsets.has(middle.slice(-2)))cut=next.start-2;
+    else cut=next.start-1;
+    if(cut>0&&cut<s.length)cuts.push(cut);
   }
-  const observer=new MutationObserver(()=>{
-    if(!active){original=word.textContent;return}
-    if(word.textContent!==respell(original))reset();
-  });
-  observer.observe(word,{childList:true,characterData:true,subtree:true});
-  button.addEventListener("click",()=>{
-    if(!active){
-      original=word.textContent;
-      if(!original)return;
-      const shown=respell(original);
-      if(!shown)return;
-      active=true;
-      word.textContent=shown;
-      button.textContent="Mostrar palavra";
-      button.setAttribute("aria-pressed","true");
-    }else{
-      active=false;
-      word.textContent=original;
-      reset();
-    }
-  });
-  document.querySelectorAll("[data-result]").forEach(b=>b.addEventListener("click",()=>{active=false;reset()},true));
+  const unique=[...new Set(cuts)].sort((a,b)=>a-b);
+  let start=0;
+  return [...unique,s.length].map(end=>{const chunk=s.slice(start,end);start=end;return chunk}).filter(Boolean).join("-");
+}
+const button=document.getElementById("readingChunksToggle");
+const word=document.getElementById("word");
+if(!button||!word)return;
+let active=false;
+let original="";
+function reset(){active=false;original=word.textContent;button.textContent="Separar para ler";button.setAttribute("aria-pressed","false");}
+const observer=new MutationObserver(()=>{if(!active){original=word.textContent;return;}if(word.textContent!==separateForReading(original))reset();});
+observer.observe(word,{childList:true,characterData:true,subtree:true});
+button.addEventListener("click",()=>{
+ if(!active){original=word.textContent;if(!original)return;active=true;word.textContent=separateForReading(original);button.textContent="Mostrar palavra";button.setAttribute("aria-pressed","true");}
+ else{active=false;word.textContent=original;reset();}
+});
+document.querySelectorAll("[data-result]").forEach(b=>b.addEventListener("click",()=>{active=false;reset();},true));
 })();

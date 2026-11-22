@@ -63,8 +63,8 @@
     s=s.replace(/c(?=[eiéêí])/g,"§");
     s=s.replace(/([aeiouáàâãéêíóôõú])s(?=[aeiouáàâãéêíóôõú])/g,"$1z");
     s=s.replace(/§/g,"s");
-    s=s.replace(/gu(?=[eiéêí])/g,"g").replace(/qu(?=[eiéêí])/g,"k");
     s=s.replace(/g(?=[eiéêí])/g,"j");
+    s=s.replace(/gu(?=[eiéêí])/g,"g").replace(/qu(?=[eiéêí])/g,"k");
     s=s.replace(/l(?!h)(?=[^aeiouáàâãéêíóôõúü]|$)/g,"u");
     s=s.replace(/^es(?=[bcdfghjklmnpqrstvwxyz])/,"is");
     s=s.replace(/e$/,"i").replace(/o$/,"u");
